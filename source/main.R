@@ -22,10 +22,10 @@ library( httr )
 library( stringr )
 
 # set project directory path
-srcDir = "C:/Users/DewerZHT/Desktop/Taiwan AirQC/source/"
-dataDir = "C:/Users/DewerZHT/Desktop/Taiwan AirQC/data/"
-plotDir = "C:/Users/DewerZHT/Desktop/Taiwan AirQC/plots/"
-downloadDir = "C:/Users/DewerZHT/Desktop/Taiwan AirQC/downloads/"
+srcDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/source/"
+dataDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/data/"
+plotDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/plots/"
+downloadDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/downloads/"
 
 # set working directory to source
 setwd( srcDir )
@@ -73,6 +73,29 @@ for( counter in 1:( sum( str_count( fileList, "AirBoxMeasure" ) ) - 1 ) ) {
   
 }
 
+# load data by date into single spceify dataframe 
+# list the files in Taiwan AirQC/downloads/taipei airbox
+fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
+fileList
+# count how many files named with AirBoxMeasure
+sum( str_count( fileList, "20160512_" ) )
+
+# set airbox file started timestamp
+startTime <- as.POSIXlt( "2016-05-12 00:00:00" )
+
+tpeAirQCMeasure <- NULL
+tpeAirQCFileState <- NULL
+#
+for( counter in 1:( sum( str_count( fileList, "20160512_" ) ) ) ) {
+  tmp <- getAirBoxMeasure( paste0( downloadDir, "taipei airbox/", format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" ) )
+  tpeAirQCMeasure <- rbind( tpeAirQCMeasure, tmp )
+  print( format( startTime, "%Y%m%d_%H" ) )
+  startTime <- startTime + 3600
+  
+}
+
+save( tpeAirQCMeasure, file = paste0( dataDir, "taipei airbox/", format( startTime, "%Y%m%d" ), " measure.Rdata") )
+
 # show records belongs to device_id 28C2DDDD47D5
 specifyRecords <- which( tpeAirQCMeasure$device_id == "28C2DDDD47D5" )
 specifyRecords
@@ -86,7 +109,6 @@ specifyDevRecords <- data.frame( time, pm2.5 )
 
 specifyDevRecords.subset <- specifyDevRecords[ grep( "2016-05-12", time ), ]
 
-reg1 <- lm(specifyDevRecords.subset$pm2.5 ~ specifyDevRecords.subset$time )
 require(ggplot2)
 theme_set(theme_bw()) # Change the theme to my preference
 ggplot( aes( x = time, y = pm2.5 ), data = specifyDevRecords.subset ) + geom_point()
