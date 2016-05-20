@@ -1,0 +1,26 @@
+Data description:
+(1)偵測資料: 
+  time：資料產生時間 
+  device_id：AirBox ID 
+  s_0：Message sequence number 
+  s_1：Battery power(0 ~ 100) 
+  s_2：Battery or Plug(0: Battery 1: Plug) 
+  s_3：Moving speed(Should be 0) 
+  s_d0：PM2.5 
+  s_t0：Temperature 
+  s_h0：Humidity 
+
+(2)設備資料： 
+  device_id：AirBox ID 
+  vendor：Vendor number 
+  ver_format：Message format version 
+  fmt_opt：A fixed value 
+  app：App name 
+  ver_app：AirBox firmware version 
+  device：AirBox Name 
+  gps_lat：Latitude 
+  gps_lon：Longitude 
+  gps_fix：A fixed value(Must be 1) 
+  gps_num：A number(Greater than 4) 
+  gps_alt：Altitude
+  (註:gps_fix,gps_num,gps_alt這三個欄位是為了與LASS相容而設置，並無實質用途) 

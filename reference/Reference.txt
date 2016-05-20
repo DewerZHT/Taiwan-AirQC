@@ -1,0 +1,15 @@
+Open Data Taipei
+  data description:
+  http://data.taipei/opendata/datalist/datasetMeta?oid=4ba06157-3854-4111-9383-3b8a188c962a
+
+  data api:
+  http://data.taipei/opendata/datalist/datasetMeta/outboundDesc?id=4ba06157-3854-4111-9383-3b8a188c962a&rid=121311db-55f0-4bf3-908c-5456d8491d43
+
+  original source:
+  http://data.taipei/opendata/datalist/datasetMeta/preview?id=4ba06157-3854-4111-9383-3b8a188c962a&rid=2382697a-c406-404c-a9f2-94655d7c38e1
+
+Taiwan CWB
+  Data Set:
+  http://opendata.cwb.gov.tw/
+  
+  
