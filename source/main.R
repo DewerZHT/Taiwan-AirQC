@@ -129,3 +129,39 @@ currentTime <- format( Sys.time(), "%Y%m%d_%H%M" )
 epaDownloadFile = paste0( downloadDir, "cwb/", currentTime, "_rain.csv" )
 
 downloadEPAData( testID, epaToken, epaDownloadFile, testFormat)
+
+##
+# AirQC
+testID = "355000000I-000001"
+testFormat = "csv"
+currentTime <- format( Sys.time(), "%Y%m%d_%H%M" )
+epaDownloadFile = paste0( downloadDir, "epa/", currentTime, "_airqc.csv" )
+
+downloadEPAData( testID, epaToken, epaDownloadFile, testFormat)
+
+airQC <- read.csv( epaDownloadFile , encoding = "UTF-8" )
+airQC$X.U.FEFF.SiteName
+
+rainCSVFile <- paste0( downloadDir, "cwb/20160518_1517_rain.csv" )
+rain <- read.csv( rainCSVFile, encoding = "UTF-8" )
+
+# load rain data by date into single spceify dataframe 
+# list the files in Taiwan AirQC/downloads/taipei airbox
+fileList <- list.files( paste0( downloadDir, "cwb" ) )
+fileList
+# count how many files named with AirBoxMeasure
+sum( str_count( fileList, "20160512_" ) )
+
+# set airbox file started timestamp
+startTime <- as.POSIXlt( "2016-05-12 00:00:00" )
+
+tpeAirQCMeasure <- NULL
+tpeAirQCFileState <- NULL
+#
+for( counter in 1:( sum( str_count( fileList, "20160512_" ) ) ) ) {
+  tmp <- getAirBoxMeasure( paste0( downloadDir, "taipei airbox/", format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" ) )
+  tpeAirQCMeasure <- rbind( tpeAirQCMeasure, tmp )
+  print( format( startTime, "%Y%m%d_%H" ) )
+  startTime <- startTime + 3600
+  
+}

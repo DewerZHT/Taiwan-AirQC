@@ -13,8 +13,11 @@ require(rjson)
 require(RCurl)
 
 # set the project and data directory path
-scriptDir = "C:/Users/DewerZHT/Desktop/Taiwan AirQC/source/"
-downloadDir = "C:/Users/DewerZHT/Desktop/Taiwan AirQC/downloads/"
+srcDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/source/"
+dataDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/data/"
+plotDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/plots/"
+downloadDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/downloads/"
+
 deviceDataURL = "https://tpairbox.blob.core.windows.net/blobfs/AirBoxDevice.gz"
 measureDataURL = "https://tpairbox.blob.core.windows.net/blobfs/AirBoxData.gz"
 deviceDataFile = paste0(downloadDir, "AirBoxDevice.json")
