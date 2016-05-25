@@ -78,15 +78,15 @@ for( counter in 1:( sum( str_count( fileList, "AirBoxMeasure" ) ) - 1 ) ) {
 fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
 fileList
 # count how many files named with AirBoxMeasure
-sum( str_count( fileList, "20160512_" ) )
+sum( str_count( fileList, "20160518_" ) )
 
 # set airbox file started timestamp
-startTime <- as.POSIXlt( "2016-05-12 00:00:00" )
+startTime <- as.POSIXlt( "2016-05-18 00:00:00" )
 
 tpeAirQCMeasure <- NULL
 tpeAirQCFileState <- NULL
 #
-for( counter in 1:( sum( str_count( fileList, "20160512_" ) ) ) ) {
+for( counter in 1:24 ) {
   tmp <- getAirBoxMeasure( paste0( downloadDir, "taipei airbox/", format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" ) )
   tpeAirQCMeasure <- rbind( tpeAirQCMeasure, tmp )
   print( format( startTime, "%Y%m%d_%H" ) )
@@ -96,16 +96,16 @@ for( counter in 1:( sum( str_count( fileList, "20160512_" ) ) ) ) {
 
 save( tpeAirQCMeasure, file = paste0( dataDir, "taipei airbox/", format( startTime, "%Y%m%d" ), " measure.Rdata") )
 
-# show records belongs to device_id 28C2DDDD47D5
-specifyRecords <- which( tpeAirQCMeasure$device_id == "28C2DDDD47D5" )
-specifyRecords
+# show records belongs to device_id 28C2DDDD4379
+specifyRecordsTPE <- which( tpeAirQCMeasure$device_id == "28C2DDDD4379" )
+specifyRecordsTEP
 
 # count the records
 length(specifyRecords)
 
-time <- tpeAirQCMeasure[ specifyRecords, "time"]
-pm2.5 <- tpeAirQCMeasure[ specifyRecords, "s_d0"]
-specifyDevRecords <- data.frame( time, pm2.5 )
+time <- tpeAirQCMeasure[ specifyRecordsTPE, "time"]
+pm2.5 <- tpeAirQCMeasure[ specifyRecordsTPE, "s_d0"]
+specifyDevRecordsTPE <- data.frame( time, pm2.5 )
 
 specifyDevRecords.subset <- specifyDevRecords[ grep( "2016-05-12", time ), ]
 
@@ -150,18 +150,43 @@ rain <- read.csv( rainCSVFile, encoding = "UTF-8" )
 fileList <- list.files( paste0( downloadDir, "cwb" ) )
 fileList
 # count how many files named with AirBoxMeasure
-sum( str_count( fileList, "20160512_" ) )
+sum( str_count( fileList, "rain" ) )
 
 # set airbox file started timestamp
-startTime <- as.POSIXlt( "2016-05-12 00:00:00" )
+startTime <- as.POSIXlt( "2016-05-18 15:17:00" )
 
-tpeAirQCMeasure <- NULL
+cwbRainMeasure <- NULL
 tpeAirQCFileState <- NULL
 #
-for( counter in 1:( sum( str_count( fileList, "20160512_" ) ) ) ) {
-  tmp <- getAirBoxMeasure( paste0( downloadDir, "taipei airbox/", format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" ) )
-  tpeAirQCMeasure <- rbind( tpeAirQCMeasure, tmp )
-  print( format( startTime, "%Y%m%d_%H" ) )
-  startTime <- startTime + 3600
+for( counter in 1:144) {
+  rainCSVFile <- paste0( downloadDir, "cwb/", format( startTime, "%Y%m%d_%H%M"), "_rain.csv" )
+  tmp <- read.csv( rainCSVFile, encoding = "UTF-8" )
+  cwbRainMeasure <- rbind( cwbRainMeasure, tmp )
+  print( format( startTime, "%Y%m%d_%H%M" ) )
+  startTime <- startTime + 600
   
 }
+
+which(tpcMeasure$Name == "協和#1" )
+
+# show records belongs to device_id 28C2DDDD47D5
+specifyRecords <- which(tpcMeasure$Name == "協和#2" )
+specifyRecords
+
+# count the records
+length(specifyRecords)
+
+timestamp <- tpcMeasure[ specifyRecords, "Timestamp" ]
+timestamp
+gen <- tpcMeasure[ specifyRecords, "Gen" ]
+gen
+specifyDevRecords <- data.frame( timestamp, gen )
+specifyDevRecords.subset <- specifyDevRecords[ grep( "2016-05-18", timestamp ), ]
+
+require(ggplot2)
+theme_set(theme_bw()) # Change the theme to my preference
+ggplot( aes( x = timestamp, y = gen ), data = specifyDevRecords.subset ) + geom_point()
+
+theme_set(theme_bw()) # Change the theme to my preference
+ggplot( aes( x = time, y = pm2.5 ), data = specifyDevRecordsTPE ) + geom_point()
+
