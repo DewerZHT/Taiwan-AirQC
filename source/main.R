@@ -190,3 +190,34 @@ ggplot( aes( x = timestamp, y = gen ), data = specifyDevRecords.subset ) + geom_
 theme_set(theme_bw()) # Change the theme to my preference
 ggplot( aes( x = time, y = pm2.5 ), data = specifyDevRecordsTPE ) + geom_point()
 
+sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
+
+filename = "20160512_13_AirBoxMeasure.json"
+type = "taipei airqc"
+
+checkDownloadSouce <- function( filename, type ) {
+  if( length( which( sourceData$file_name == filename ) ) == 0 ) {
+    message( "File hasn't been add in data frame.")
+    dims <- dim(sourceData)
+    fid = dims[1] + 1
+    proceed = FALSE
+    single_row = c( fid, filename, proceed, type )
+    sourceData <- rbind( sourceData, single_row)
+    
+  }
+  else if( sourceData[ which( sourceData$file_name == filename ), 3] == FALSE ) {
+    message( "File hasn't been proceed." )
+    
+    
+  }
+}
+
+
+fileList <- NULL
+fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
+
+for( counter in 1:sum( str_count( fileList, "AirBoxMeasure.json" ) ) ) {
+  
+  
+}
+
