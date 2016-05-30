@@ -11,7 +11,6 @@
 # install.packages( "RMySQL" )
 # install.packages( "stringr" )
 library( RMySQL )
-library( stringr )
 
 mysqlDB = dbConnect( MySQL(),
                      user = 'DewerZHT',
@@ -28,3 +27,4 @@ dbListTables( mysqlDB )
 sqlQuery = 'CREATE TABLE source_data ( file_id int NOT NULL AUTO_INCREMENT, file_name varchar(255) NOT NULL, proceed BOOLEAN, type varchar(255), PRIMARY KEY (file_id) )'
 dbSendQuery( mysqlDB, sqlQuery )
 
+dbWriteTable( mysqlDB, name = 'source_data', value = sourceData, overwrite = TRUE, row.names = FALSE)

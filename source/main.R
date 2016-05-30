@@ -34,6 +34,75 @@ source( "FetchTPEAirBoxData.R" )
 source( "FetchCWBOpenData.R" )
 source( "FetchTPCData.R" )
 
+sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
+
+fileList <- NULL
+fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
+
+startTime <- as.POSIXlt( "2016-05-11 15:00:00" )
+file_id = NULL
+file_name = NULL
+proceed = NULL
+type = NULL
+
+for( counter in 1:( sum( str_count( fileList, "AirBoxMeasure.json" ) ) - 1 ) ) {
+  print( paste0( "  >>Check the file: ", format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" ) )
+  file_id[ counter ] <- counter
+  file_name[ counter ] <- paste0( format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" )
+  proceed[ counter ] <- FALSE
+  type[ counter ] <- "taipei airqc"
+  startTime = startTime + 3600
+  
+}
+
+sourceData <- data.frame( file_id, file_name, proceed, type )
+
+fileList <- NULL
+fileList <- list.files( paste0( downloadDir, "tpc" ) )
+
+startTime <- as.POSIXlt( "2016-05-17 16:07:00" )
+file_id = NULL
+file_name = NULL
+proceed = NULL
+type = NULL
+
+for( counter in 1:( sum( str_count( fileList, "tpcInstantPower.json" ) ) - 1 ) ) {
+  print( paste0( "  >>Check the file: ", format( startTime, "%Y%m%d_%H%M" ), "_tpcInstantPower.json" ) )
+  file_id[ counter ] <- counter + dim(sourceData)[1]
+  file_name[ counter ] <- paste0( format( startTime, "%Y%m%d_%H%M" ), "_tpcInstantPower.json" )
+  proceed[ counter ] <- FALSE
+  type[ counter ] <- "tpc"
+  startTime = startTime + 600
+  
+}
+
+tpcSrcData <- data.frame( file_id, file_name, proceed, type )
+
+sourceData <- rbind( sourceData, tpcSrcData )
+
+## -----
+# unfinished part
+checkDownloadSouce <- function( filename, type ) {
+  if( length( which( sourceData$file_name == filename ) ) == 0 ) {
+    message( "File hasn't been add in data frame.")
+    dims <- dim(sourceData)
+    fid = dims[1] + 1
+    proceed = FALSE
+    single_row = c( fid, filename, proceed, type )
+    sourceData <- rbind( sourceData, single_row)
+    
+  }
+  else if( sourceData[ which( sourceData$file_name == filename ), 3] == FALSE ) {
+    message( "File hasn't been proceed." )
+    message( paste0( "please procee file: ", sourceData[ which( sourceData$file_name == filename ), 2]) )
+    
+  }
+  else {
+    message( "File had been proceed." )
+    
+  }
+  
+}
 ##
 # load Taipei AirBox Data
 # data source: [project directory]/downloads/taipei airbox/AirBoxDevice.json
@@ -189,35 +258,3 @@ ggplot( aes( x = timestamp, y = gen ), data = specifyDevRecords.subset ) + geom_
 
 theme_set(theme_bw()) # Change the theme to my preference
 ggplot( aes( x = time, y = pm2.5 ), data = specifyDevRecordsTPE ) + geom_point()
-
-sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
-
-filename = "20160512_13_AirBoxMeasure.json"
-type = "taipei airqc"
-
-checkDownloadSouce <- function( filename, type ) {
-  if( length( which( sourceData$file_name == filename ) ) == 0 ) {
-    message( "File hasn't been add in data frame.")
-    dims <- dim(sourceData)
-    fid = dims[1] + 1
-    proceed = FALSE
-    single_row = c( fid, filename, proceed, type )
-    sourceData <- rbind( sourceData, single_row)
-    
-  }
-  else if( sourceData[ which( sourceData$file_name == filename ), 3] == FALSE ) {
-    message( "File hasn't been proceed." )
-    
-    
-  }
-}
-
-
-fileList <- NULL
-fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
-
-for( counter in 1:sum( str_count( fileList, "AirBoxMeasure.json" ) ) ) {
-  
-  
-}
-
