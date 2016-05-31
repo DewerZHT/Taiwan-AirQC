@@ -1,0 +1,53 @@
+Date: 2016.05.31 20:26 UTC+8
+Author: Wu, Zhen-Hao
+
+NOTE THAT:
+  不可以在檔案讀取時將即時的確認資料輸進dataframe
+
+``` r, source code part
+## -----
+# initiate the data frame to record download source data state
+sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
+
+## -----
+# insert taipei airbox download source info into dataframe sourceData
+fileList <- NULL
+fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
+targetList = str_count( fileList, "AirBoxMeasure.json" )
+
+###
+# NOTE THAT:
+#   you can't use lapply for get file information into a dataframe
+#   it need sequential process
+
+## -----
+# a function 
+checkABoxDLsrcData <- function( fname ) {
+  if( str_count( fname, "AirBoxMeasure.json" ) ) {
+    message( "> Debug message for get file" )
+    file_id = dim( sourceData )[1] + 1
+    file_name = fname
+    proceed = FALSE
+    type = 'taipei airqc'
+    aRow = c( file_id, file_name, proceed, type )
+    sourceData = rbind( sourceData, aRow)
+    
+  }
+  
+}
+
+lapply( fileList, checkABoxDLsrcData )
+###
+
+```
+以下是OUTPUT
+``` r, output
+...
+[[193]]
+  X.1. X.20160519_14_AirBoxMeasure.json. X.FALSE. X.taipei.airqc.
+1    1    20160519_14_AirBoxMeasure.json    FALSE    taipei airqc
+...
+[[441]]
+  X.1. X.20160531_00_AirBoxMeasure.json. X.FALSE. X.taipei.airqc.
+1    1    20160531_00_AirBoxMeasure.json    FALSE    taipei airqc
+```

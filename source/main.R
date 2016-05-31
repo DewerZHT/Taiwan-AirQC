@@ -34,10 +34,82 @@ source( "FetchTPEAirBoxData.R" )
 source( "FetchCWBOpenData.R" )
 source( "FetchTPCData.R" )
 
+load()
+
+## -----
+# initiate the data frame to record download source data state
 sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
 
+## -----
+# insert taipei airbox download source info into dataframe
+
+# get the file list from taipei airbox download source dir
 fileList <- NULL
 fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
+
+# clear all column data for next use
+file_id = NULL
+file_name = NULL
+proceed = NULL
+type = NULL
+
+#
+for( counter in 1:( length( fileList ) ) ) {
+  # check the file read now
+  message( paste0( "> Debug: check file ", fileList[counter] ) )
+  # if file contains string "AirBoxMeasure.json"
+  if( str_count( fileList[counter], "AirBoxMeasure.json" ) ) {
+    message( "Debug: the file is specify target" )
+    if( length( which( sourceData$file_name == fileList[counter] ) ) == 0 ) {
+      message( "> Debug: add file information into DF" )
+      file_id[counter] = dim( sourceData )[1] + counter
+      file_name[counter] = fileList[counter]
+      proceed[counter] = FALSE
+      type[counter] = 'taipei airqc'
+      
+    } # end of if
+    else {
+      message( "> Debug: this file had already in DF" )
+      
+    } # end of else
+    
+  } # end of if
+  
+} # end of for
+
+newData = data.frame( file_id, file_name, proceed, type )
+sourceData <- rbind( sourceData, newData )
+
+## -----
+# insert tpc download source info into dataframe
+
+# get the file list from tpc download source dir
+fileList <- NULL
+fileList <- list.files( paste0( downloadDir, "tpc" ) )
+
+# clear all column data for next use
+file_id = NULL
+file_name = NULL
+proceed = NULL
+type = NULL
+
+# 
+for( counter in 1:( length( fileList ) ) ) {
+  # check the file read now
+  message( paste0( "> Debug: check file", fileList[counter] ) )
+  if( str_count( fileList[counter], "tpcInstantPower.json" ) ) {
+    message( "> Debug message for get file" )
+    file_id[counter] = dim( sourceData )[1] + counter
+    file_name[counter] = fileList[counter]
+    proceed[counter] = FALSE
+    type[counter] = 'tpc'
+    
+  }
+  
+}
+
+newData = data.frame( file_id, file_name, proceed, type )
+sourceData <- rbind( sourceData, newData )
 
 startTime <- as.POSIXlt( "2016-05-11 15:00:00" )
 file_id = NULL
@@ -79,6 +151,17 @@ for( counter in 1:( sum( str_count( fileList, "tpcInstantPower.json" ) ) - 1 ) )
 tpcSrcData <- data.frame( file_id, file_name, proceed, type )
 
 sourceData <- rbind( sourceData, tpcSrcData )
+
+fileList <- NULL
+fileList <- list.files( paste0( downloadDir, "tpc" ) )
+
+startTime <- as.POSIXlt( "2016-05-17 16:07:00" )
+file_id = NULL
+file_name = NULL
+proceed = NULL
+type = NULL
+
+save()
 
 ## -----
 # unfinished part
