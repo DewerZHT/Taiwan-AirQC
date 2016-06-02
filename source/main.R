@@ -63,7 +63,7 @@ file_name = NULL
 proceed = NULL
 type = NULL
 
-# dor all file name in fileList
+# do all file name in fileList
 for( counter in 1:( length( fileList ) ) ) {
   # check the file read now
   message( paste0( "> INFO: check file ", fileList[counter] ) )
@@ -107,7 +107,7 @@ file_name = NULL
 proceed = NULL
 type = NULL
 
-# dor all file name in fileList
+# do all file name in fileList
 for( counter in 1:( length( fileList ) ) ) {
   # check the file read now
   message( paste0( "> INFO: check file ", fileList[counter] ) )
@@ -138,7 +138,65 @@ for( counter in 1:( length( fileList ) ) ) {
 newData = data.frame( file_id, file_name, proceed, type )
 sourceData <- rbind( sourceData, newData )
 
+## -----
+# insert epa airqc download source info into dataframe
+
+# get the file list from epa airqc download source dir
+fileList <- NULL
+fileList <- list.files( paste0( downloadDir, "epa" ) )
+
+# clear all column data for next use
+file_id = NULL
+file_name = NULL
+proceed = NULL
+type = NULL
+
+# do all file name in fileList
+for( counter in 1:( length( fileList ) ) ) {
+  # check the file read now
+  message( paste0( "> INFO: check file ", fileList[counter] ) )
+  # if file contains string "airqc.csv"
+  if( str_count( fileList[counter], "airqc.csv" ) ) {
+    message( "> INFO: the file is specify target" )
+    if( length( which( sourceData$file_name == fileList[counter] ) ) == 0 ) {
+      message( "> INFO: add file information into DF" )
+      file_id[counter] = dim( sourceData )[1] + counter
+      file_name[counter] = fileList[counter]
+      proceed[counter] = FALSE
+      type[counter] = 'epa'
+      
+    } # end of if
+    else {
+      message( "> INFO: this file had already in DF" )
+      
+    } # end of else
+    
+  } # end of if
+  else {
+    message( "> INFO: the file isn't specify target" )
+    
+  }
+  
+} # end of for
+
+newData = data.frame( file_id, file_name, proceed, type )
+sourceData <- rbind( sourceData, newData )
+
 save( sourceData, file = paste0( downloadDir, "srcDataInfo.Rdata" ) )
+
+## -----
+# process tpc data
+tpcInstantPower <- data.frame( id = integer(),
+                               time = character(),
+                               name = character(),
+                               type = integer(),
+                               longitude = double(),
+                               latitude = double(),
+                               generating_capacity = double() )
+
+## -----
+# process epa airqc data
+epaAirQCMeasure <- data.frame( )
 
 ## -----
 # unfinished part

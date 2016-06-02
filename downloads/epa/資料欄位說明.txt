@@ -1,0 +1,30 @@
+epa air qc 資料欄位說明
+#---空氣品質監測資料 (airqc.csv)---
+1.  SiteName:       測站名稱
+2.  County:         縣市
+3.  PSI:            空氣污染指標
+4.  MajorPollutant: 指標污染物
+5.  Status:         狀態
+6.  SO2:            二氧化硫濃度
+7.  CO:             一氧化碳濃度
+8.  O3:             臭氧濃度
+9.  PM10:           懸浮微粒濃度
+10. PM2.5:          細懸浮微粒濃度
+11. NO2:            二氧化氮濃度
+12. WindSpeed:      風速
+13. WindDirec:      風向
+14. FPMI:           細懸浮微粒指標
+15. NOx:            氮氧化物
+16. NO:             一氧化氮
+17. PublishTime:    發布時間
+
+#---空氣品質監測站資料 (airqc_site.csv)---
+1. SiteName:    測站名稱
+2. SiteEngName: 測站英文名稱
+3. AreaName:    空品區
+4. County:      縣市
+5. Township:    鄉鎮
+6. SiteAddress: 測站地址
+7. TWD97Lon:    經度(TWD97)
+8. TWD97Lat:    緯度(TWD97)
+9. SiteType:    測站類型
