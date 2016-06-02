@@ -34,11 +34,21 @@ source( "FetchTPEAirBoxData.R" )
 source( "FetchCWBOpenData.R" )
 source( "FetchTPCData.R" )
 
-load()
 
 ## -----
-# initiate the data frame to record download source data state
-sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
+# 
+srcDataFile = paste0( downloadDir, "srcDataInfo.Rdata" )
+
+if( file.exists( srcDataFile ) ) {
+  message( "> INFO: load the data set last process" )
+  load( srcDataFile )
+  
+} else {
+  message( "> INFO: hasn't process download source data check")
+  # initiate the data frame to record download source data state
+  sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
+  
+}
 
 ## -----
 # insert taipei airbox download source info into dataframe
@@ -53,15 +63,15 @@ file_name = NULL
 proceed = NULL
 type = NULL
 
-#
+# dor all file name in fileList
 for( counter in 1:( length( fileList ) ) ) {
   # check the file read now
-  message( paste0( "> Debug: check file ", fileList[counter] ) )
+  message( paste0( "> INFO: check file ", fileList[counter] ) )
   # if file contains string "AirBoxMeasure.json"
   if( str_count( fileList[counter], "AirBoxMeasure.json" ) ) {
-    message( "Debug: the file is specify target" )
+    message( "> INFO: the file is specify target" )
     if( length( which( sourceData$file_name == fileList[counter] ) ) == 0 ) {
-      message( "> Debug: add file information into DF" )
+      message( "> INFO: add file information into DF" )
       file_id[counter] = dim( sourceData )[1] + counter
       file_name[counter] = fileList[counter]
       proceed[counter] = FALSE
@@ -69,11 +79,15 @@ for( counter in 1:( length( fileList ) ) ) {
       
     } # end of if
     else {
-      message( "> Debug: this file had already in DF" )
+      message( "> INFO: this file had already in DF" )
       
     } # end of else
     
   } # end of if
+  else {
+    message( "> INFO: the file isn't specify target" )
+    
+  }
   
 } # end of for
 
@@ -93,75 +107,38 @@ file_name = NULL
 proceed = NULL
 type = NULL
 
-# 
+# dor all file name in fileList
 for( counter in 1:( length( fileList ) ) ) {
   # check the file read now
-  message( paste0( "> Debug: check file", fileList[counter] ) )
+  message( paste0( "> INFO: check file ", fileList[counter] ) )
+  # if file contains string "tpcInstantPower.json"
   if( str_count( fileList[counter], "tpcInstantPower.json" ) ) {
-    message( "> Debug message for get file" )
-    file_id[counter] = dim( sourceData )[1] + counter
-    file_name[counter] = fileList[counter]
-    proceed[counter] = FALSE
-    type[counter] = 'tpc'
+    message( "> INFO: the file is specify target" )
+    if( length( which( sourceData$file_name == fileList[counter] ) ) == 0 ) {
+      message( "> INFO: add file information into DF" )
+      file_id[counter] = dim( sourceData )[1] + counter
+      file_name[counter] = fileList[counter]
+      proceed[counter] = FALSE
+      type[counter] = 'tpc'
+      
+    } # end of if
+    else {
+      message( "> INFO: this file had already in DF" )
+      
+    } # end of else
+    
+  } # end of if
+  else {
+    message( "> INFO: the file isn't specify target" )
     
   }
   
-}
+} # end of for
 
 newData = data.frame( file_id, file_name, proceed, type )
 sourceData <- rbind( sourceData, newData )
 
-startTime <- as.POSIXlt( "2016-05-11 15:00:00" )
-file_id = NULL
-file_name = NULL
-proceed = NULL
-type = NULL
-
-for( counter in 1:( sum( str_count( fileList, "AirBoxMeasure.json" ) ) - 1 ) ) {
-  print( paste0( "  >>Check the file: ", format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" ) )
-  file_id[ counter ] <- counter
-  file_name[ counter ] <- paste0( format( startTime, "%Y%m%d_%H" ), "_AirBoxMeasure.json" )
-  proceed[ counter ] <- FALSE
-  type[ counter ] <- "taipei airqc"
-  startTime = startTime + 3600
-  
-}
-
-sourceData <- data.frame( file_id, file_name, proceed, type )
-
-fileList <- NULL
-fileList <- list.files( paste0( downloadDir, "tpc" ) )
-
-startTime <- as.POSIXlt( "2016-05-17 16:07:00" )
-file_id = NULL
-file_name = NULL
-proceed = NULL
-type = NULL
-
-for( counter in 1:( sum( str_count( fileList, "tpcInstantPower.json" ) ) - 1 ) ) {
-  print( paste0( "  >>Check the file: ", format( startTime, "%Y%m%d_%H%M" ), "_tpcInstantPower.json" ) )
-  file_id[ counter ] <- counter + dim(sourceData)[1]
-  file_name[ counter ] <- paste0( format( startTime, "%Y%m%d_%H%M" ), "_tpcInstantPower.json" )
-  proceed[ counter ] <- FALSE
-  type[ counter ] <- "tpc"
-  startTime = startTime + 600
-  
-}
-
-tpcSrcData <- data.frame( file_id, file_name, proceed, type )
-
-sourceData <- rbind( sourceData, tpcSrcData )
-
-fileList <- NULL
-fileList <- list.files( paste0( downloadDir, "tpc" ) )
-
-startTime <- as.POSIXlt( "2016-05-17 16:07:00" )
-file_id = NULL
-file_name = NULL
-proceed = NULL
-type = NULL
-
-save()
+save( sourceData, file = paste0( downloadDir, "srcDataInfo.Rdata" ) )
 
 ## -----
 # unfinished part
