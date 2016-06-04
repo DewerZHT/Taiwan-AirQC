@@ -196,7 +196,28 @@ tpcInstantPower <- data.frame( id = integer(),
 
 ## -----
 # process epa airqc data
-epaAirQCMeasure <- data.frame( )
+epaAirQCMeasure <- data.frame( site_id = integer(),
+                               site_name = character(),
+                               county_id = integer(),
+                               psi = integer(),
+                               wind_speed = double(),
+                               wind_direction = double(),
+                               pm2.5 = integer(),
+                               pm10 = integer(),
+                               so2 = double(),
+                               co = double(),
+                               time = character() )
+
+epaFile = paste0( downloadDir, 'epa/', sourceData[which(sourceData$type == 'epa')[1], 'file_name'] )
+epaFile
+testDF = read.csv(file = epaFile, encoding = 'UTF-8', header = TRUE )
+as.character( testDF$X.U.FEFF.SiteName )
+columnNames = c( 'SiteName', 'County', 'PSI', 'MajorPollutant',
+                 'Status', 'SO2', 'CO', 'O3', 'PM10', 'PM2.5',
+                 'NO2', 'WindSpeed', 'WindDirec', 'FPMI',
+                 'NOx', 'NO', 'PublishTime' )
+colnames( testDF ) = columnNames
+
 
 ## -----
 # unfinished part
