@@ -22,15 +22,15 @@ library( httr )
 library( stringr )
 
 # set project directory path
-srcDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/source/"
-dataDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/data/"
-plotDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/plots/"
-downloadDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/downloads/"
+srcDir = paste0( getwd(), '/source/' )
+dataDir = paste0( getwd(), '/data/' )
+plotDir = paste0( getwd(), '/plots/' )
+downloadDir = paste0( getwd(), '/downloads/' )
 
 # set working directory to source
 setwd( srcDir )
 # load function script
-source( "FetchTPEAirBoxData.R" )
+source( "tpeAirQC.R" )
 source( "FetchCWBOpenData.R" )
 source( "FetchTPCData.R" )
 
@@ -50,9 +50,7 @@ if( file.exists( srcDataFile ) ) {
   
 }
 
-## -----
-# insert taipei airbox download source info into dataframe
-
+## insert taipei airbox download source info into dataframe -----
 # get the file list from taipei airbox download source dir
 fileList <- NULL
 fileList <- list.files( paste0( downloadDir, "taipei airbox" ) )
@@ -94,9 +92,7 @@ for( counter in 1:( length( fileList ) ) ) {
 newData = data.frame( file_id, file_name, proceed, type )
 sourceData <- rbind( sourceData, newData )
 
-## -----
-# insert tpc download source info into dataframe
-
+## insert tpc download source info into dataframe -----
 # get the file list from tpc download source dir
 fileList <- NULL
 fileList <- list.files( paste0( downloadDir, "tpc" ) )
@@ -138,9 +134,7 @@ for( counter in 1:( length( fileList ) ) ) {
 newData = data.frame( file_id, file_name, proceed, type )
 sourceData <- rbind( sourceData, newData )
 
-## -----
-# insert epa airqc download source info into dataframe
-
+## insert epa airqc download source info into dataframe -----
 # get the file list from epa airqc download source dir
 fileList <- NULL
 fileList <- list.files( paste0( downloadDir, "epa" ) )
@@ -181,6 +175,7 @@ for( counter in 1:( length( fileList ) ) ) {
 
 newData = data.frame( file_id, file_name, proceed, type )
 sourceData <- rbind( sourceData, newData )
+sourceData = na.omit( sourceData )
 
 save( sourceData, file = paste0( downloadDir, "srcDataInfo.Rdata" ) )
 
@@ -219,8 +214,7 @@ columnNames = c( 'SiteName', 'County', 'PSI', 'MajorPollutant',
 colnames( testDF ) = columnNames
 
 
-## -----
-# unfinished part
+## unfinished part -----
 checkDownloadSouce <- function( filename, type ) {
   if( length( which( sourceData$file_name == filename ) ) == 0 ) {
     message( "File hasn't been add in data frame.")
