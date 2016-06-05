@@ -179,8 +179,7 @@ sourceData = na.omit( sourceData )
 
 save( sourceData, file = paste0( downloadDir, "srcDataInfo.Rdata" ) )
 
-## -----
-# process tpc data
+## process tpc data (unfinished) -----
 tpcInstantPower <- data.frame( id = integer(),
                                time = character(),
                                name = character(),
@@ -189,8 +188,8 @@ tpcInstantPower <- data.frame( id = integer(),
                                latitude = double(),
                                generating_capacity = double() )
 
-## -----
-# process epa airqc data
+## process epa airqc data (unfinished) -----
+# 
 epaAirQCMeasure <- data.frame( site_id = integer(),
                                site_name = character(),
                                county_id = integer(),
@@ -213,6 +212,47 @@ columnNames = c( 'SiteName', 'County', 'PSI', 'MajorPollutant',
                  'NOx', 'NO', 'PublishTime' )
 colnames( testDF ) = columnNames
 
+## process tpe airbox data () -----
+# Load TPE airbox device data
+tpeDownloadDir = paste0( downloadDir, "taipei airbox/")
+tpeDeviceFile = paste0( tpeDownloadDir, "AirBoxDevice.json")
+tpeAirQCDevice = getAirBoxDevice( tpeDeviceFile )
+
+# set a path to store origin data
+tpeOriDataFile = paste0( dataDir, "taipei airbox/tpeOriginData.Rdata" )
+
+if( file.exists( tpeOriDataFile ) ) {
+  message( "> INFO: load the data set last process" )
+  load( tpeOriDataFile )
+  
+} else {
+  message( "> INFO: hasn't load any TPE AirQC Measure")
+  # initiate the data frame to record download source data state
+  tpeAirQCMeasure = NULL
+  
+}
+
+# 
+tpeAirQCFiles = sourceData[ which( sourceData$type == 'taipei airqc' ), 2 ]
+tpeAirQCFiles[1:20]
+# load the specified data file into 
+
+for( counter in 1:20 ) {
+  if( sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] ) {
+    message( "> INFO: File had been processed")
+    
+  }
+  else {
+    message( "> INFO: Load file data into dataframe" )
+    tpeAirQCMeasure = rbind( tpeAirQCMeasure, getAirBoxMeasure( paste0( tpeDownloadDir, tpeAirQCFiles[1] ) ) )
+    sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] = TRUE
+    
+  }
+  
+}
+
+
+tpeAirQCMeasure
 
 ## unfinished part -----
 checkDownloadSouce <- function( filename, type ) {

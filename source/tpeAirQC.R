@@ -12,12 +12,6 @@
 require(rjson)
 require(RCurl)
 
-# set the project and data directory path
-srcDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/source/"
-dataDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/data/"
-plotDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/plots/"
-downloadDir = "C:/Users/DewerZHT/Documents/git-repositories/Taiwan AirQC/downloads/"
-
 deviceDataURL = "https://tpairbox.blob.core.windows.net/blobfs/AirBoxDevice.gz"
 measureDataURL = "https://tpairbox.blob.core.windows.net/blobfs/AirBoxData.gz"
 deviceDataFile = paste0(downloadDir, "AirBoxDevice.json")
@@ -49,23 +43,19 @@ downloadAirBoxDevice <- function( destFile, forcedownload = FALSE ) {
   
 }
 
-getAirBoxDevice <- function( sourceFile, forcedownload = FALSE ) {
-  if( ( !file.exists( sourceFile ) ) | ( forcedownload == TRUE ) ) {
-    downloadFile = paste0( downloadDir, "AirBoxDevice.gz" )
-    getWebData( deviceDataURL, downloadFile )
-    gzData <- gzfile( downloadFile, open = "rb" )
-    jsonData <- readLines( gzData )
-    writeLines( jsonData, sourceFile )
-    close(sourceFile)
+getAirBoxDevice <- function( sourceFile ) {
+  if( file.exists( sourceFile ) ) {
+    # load the 
+    message( "> INFO: Load TPE airbox device data" )
+    AirBoxDeviceData <- fromJSON( file = sourceFile )
+    AirBoxDeviceData <- do.call( "rbind", lapply( AirBoxDeviceData$entries, as.data.frame ) )
+    return( AirBoxDeviceData )
     
   }
   else {
-    
+    message( paste0( "> INFO: ", sourceFile, " NOT EXISTS!") )
     
   }
-  AirBoxDeviceData <- fromJSON( file = sourceFile )
-  AirBoxDeviceData <- do.call( "rbind", lapply( AirBoxDeviceData$entries, as.data.frame ) )
-  return( AirBoxDeviceData )
   
 }
 
