@@ -235,9 +235,11 @@ if( file.exists( tpeOriDataFile ) ) {
 # 
 tpeAirQCFiles = sourceData[ which( sourceData$type == 'taipei airqc' ), 2 ]
 tpeAirQCFiles[1:20]
+length( tpeAirQCFiles )
+
 # load the specified data file into 
 
-for( counter in 1:20 ) {
+for( counter in 1:length( tpeAirQCFiles ) ) {
   if( sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] ) {
     message( "> INFO: File had been processed")
     
@@ -251,8 +253,63 @@ for( counter in 1:20 ) {
   
 }
 
+save( tpeAirQCMeasure, file = paste0( dataDir, "taipei airbox/origin/allData.Rdata" ) )
+save( sourceData, file = paste0( downloadDir, "srcDataInfo.Rdata" ) )
 
-tpeAirQCMeasure
+## sperate single device data into single data frame -----
+
+# create a new empty list for specified device data
+specDev.time = list()
+specDev.device_id = list()
+specDev.s_0 = list()
+specDev.s_1 = list()
+specDev.s_2 = list()
+specDev.s_d0 = list()
+specDev.s_t0 = list()
+specDev.s_h0 = list()
+
+# design function get origin data into a tmp list
+tpeGetEachDevMeas = function( singleMeas ) {
+  specDev.time <<- c( specDev.time, as.character( tpeAirQCMeasure[singleMeas, 'time'] ) )
+  specDev.device_id <<- c( specDev.device_id, as.character( tpeAirQCMeasure[singleMeas, 'device_id'] ))
+  specDev.s_0 <<- c( specDev.s_0, as.integer( tpeAirQCMeasure[singleMeas, 's_0'] ) )
+  specDev.s_1 <<- c( specDev.s_1, as.integer( tpeAirQCMeasure[singleMeas, 's_1'] ) )
+  specDev.s_2 <<- c( specDev.s_2, as.integer( tpeAirQCMeasure[singleMeas, 's_2'] ) )
+  specDev.s_d0 <<- c( specDev.s_d0, as.integer( tpeAirQCMeasure[singleMeas, 's_d0'] ) )
+  specDev.s_t0 <<- c( specDev.s_t0, as.double( tpeAirQCMeasure[singleMeas, 's_t0'] ) )
+  specDev.s_h0 <<- c( specDev.s_h0, as.integer( tpeAirQCMeasure[singleMeas, 's_h0'] ) )
+  
+}
+
+spec_devID = as.character( tpeAirQCDevice[10, 'device_id'] )
+specMeasData = which( tpeAirQCMeasure$device_id == spec_devID )
+tpeAirQCMeasure[specMeasData[1], ]
+tpeAirQCMeasure[specMeasData[1], 's_d0']
+lapply( specMeasData, tpeGetEachDevMeas )
+
+# unlist all specified device data
+specDev.time = unlist( specDev.time )
+specDev.device_id = unlist( specDev.device_id )
+specDev.s_0 = unlist( specDev.s_0 )
+specDev.s_1 = unlist( specDev.s_1 )
+specDev.s_2 = unlist( specDev.s_2 )
+specDev.s_d0 = unlist( specDev.s_d0 )
+specDev.s_t0 = unlist( specDev.s_t0 )
+specDev.s_h0 = unlist( specDev.s_h0 )
+
+# create a new data frame to save specified device data
+specMeasData = data.frame( time = specDev.time,
+                           device_id = specDev.device_id,
+                           s_0 = specDev.s_0,
+                           s_1 = specDev.s_1,
+                           s_2 = specDev.s_2,
+                           s_d0 = specDev.s_d0,
+                           s_t0 = specDev.s_t0,
+                           s_h0 = specDev.s_h0 )
+
+storeFile = paste0( dataDir, "taipei airbox/origin/" )
+storeFile = paste0( storeFile, specMeasData[1, 2], ".Rdata" )
+save( specMeasData, file = storeFile )
 
 ## unfinished part -----
 checkDownloadSouce <- function( filename, type ) {
