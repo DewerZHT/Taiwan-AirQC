@@ -13,6 +13,7 @@ install.packages( "ggmap" )
 install.packages( "rjson" )
 install.packages( "XML" )
 install.packages( "httr" )
+install.packages( "stringdist" )
 
 # load the libraries that the program needs
 library( ggmap ) # google map library
@@ -20,6 +21,7 @@ library( rjson )
 library( XML )
 library( httr )
 library( stringr )
+library( stringdist )
 
 # set project directory path
 srcDir = paste0( getwd(), '/source/' )
@@ -245,7 +247,7 @@ for( counter in 1:length( tpeAirQCFiles ) ) {
   }
   else {
     message( "> INFO: Load file data into dataframe" )
-    tpeAirQCMeasure = rbind( tpeAirQCMeasure, getAirBoxMeasure( paste0( tpeDownloadDir, tpeAirQCFiles[1] ) ) )
+    tpeAirQCMeasure = rbind( tpeAirQCMeasure, getAirBoxMeasure( paste0( tpeDownloadDir, tpeAirQCFiles[counter] ) ) )
     sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] = TRUE
     
   }
@@ -326,9 +328,12 @@ for( counter in 1:( dim(tpeAirQCDevice)[1] ) ) {
 tpeOriDataPath = paste0( dataDir, "taipei airbox/origin/" )
 deviceFileList = list.files( tpeOriDataPath )
 deviceFileList
-load( paste0( tpeOriDataPath, deviceFileList[1] ) )
+load( paste0( tpeOriDataPath, deviceFileList[3] ) )
 
-cT = 
+cT = as.POSIXlt( "2016-05-11 15:00:00" )
+cT = format( cT, "%Y-%m-%d %H:" )
+cT
+ain( cT, specMeasData[ 1, 'time'], maxDist = 5 )
 
 ## single measure data process -----
 spec_devID = as.character( tpeAirQCDevice[10, 'device_id'] )
