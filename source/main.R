@@ -364,8 +364,9 @@ tpe.getHourlyMeasure = function( deviceMeasData ) {
   
 }
 
-sig = specMeasData[112, ]
-str_count( sig['time'], mT)
+sig = specMeasData[113, ]
+sig$time
+str_count( sig$time , mT )
 
 tpe.getHourlyMeasure( specMeasData )
 hour.s_d0.max = max( hour.s_d0 )
