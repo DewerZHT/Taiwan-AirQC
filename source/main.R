@@ -330,20 +330,33 @@ deviceFileList = list.files( tpeOriDataPath )
 deviceFileList
 load( paste0( tpeOriDataPath, deviceFileList[3] ) )
 
+hour = NULL
 hour.s_d0 = NULL
 hour.s_t0 = NULL
 hour.s_h0 = NULL
+hour.s_d0.max = NULL
+hour.s_t0.max = NULL
+hour.s_h0.max = NULL
+hour.s_d0.min = NULL
+hour.s_t0.min = NULL
+hour.s_h0.min = NULL
+hour.s_d0.mean = NULL
+hour.s_t0.mean = NULL
+hour.s_h0.mean = NULL
 
-cT = as.POSIXlt( "2016-05-12 00:00:00" )
+cT = as.POSIXlt( "2016-05-12 01:00:00" )
 mT = format( cT, "%Y-%m-%d %H:" )
 mT
 
-tpe.getHourlyMeasure = function( deviceMeasDF, specifiedHour ) {
-  for( counter in 1:( dim( deviceMeasDF )[1] ) ) {
-    if( str_count( deviceMeasDF[counter, 'time'], mT) == 1 ) {
-      hour.s_d0 = c( hour.s_d0, deviceMeasDF[counter, 's_d0'] )
-      hour.s_t0 = c( hour.s_t0, deviceMeasDF[counter, 's_t0'] )
-      hour.s_h0 = c( hour.s_h0, deviceMeasDF[counter, 's_h0'] )
+tpe.getHourlyMeasure = function( deviceMeasData ) {
+  cT = as.POSIXlt( "2016-05-12 00:00:00" )
+  mT = format( cT, "%Y-%m-%d %H:" )
+  
+  for( counter in 1:( dim( deviceMeasData )[1] ) ) {
+    if( str_count( deviceMeasData[counter, 'time'], mT ) == 1 ) {
+      hour.s_d0 <<- c( hour.s_d0, deviceMeasData[counter, 's_d0'] )
+      hour.s_t0 <<- c( hour.s_t0, deviceMeasData[counter, 's_t0'] )
+      hour.s_h0 <<- c( hour.s_h0, deviceMeasData[counter, 's_h0'] )
       
     }
     
@@ -351,7 +364,19 @@ tpe.getHourlyMeasure = function( deviceMeasDF, specifiedHour ) {
   
 }
 
-tpe.getHourlyMeasure( specMeasData, mT )
+sig = specMeasData[112, ]
+str_count( sig['time'], mT)
+
+tpe.getHourlyMeasure( specMeasData )
+hour.s_d0.max = max( hour.s_d0 )
+hour.s_t0.max = max( hour.s_t0 )
+hour.s_h0.max = max( hour.s_h0 )
+hour.s_d0.min = min( hour.s_d0 )
+hour.s_t0.min = min( hour.s_t0 )
+hour.s_h0.min = min( hour.s_h0 )
+hour.s_d0.mean = mean( hour.s_d0 )
+hour.s_t0.mean = mean( hour.s_t0 )
+hour.s_h0.mean = mean( hour.s_h0 )
 
 ## single measure data process -----
 spec_devID = as.character( tpeAirQCDevice[10, 'device_id'] )
