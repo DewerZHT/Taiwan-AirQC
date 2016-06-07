@@ -330,10 +330,28 @@ deviceFileList = list.files( tpeOriDataPath )
 deviceFileList
 load( paste0( tpeOriDataPath, deviceFileList[3] ) )
 
-cT = as.POSIXlt( "2016-05-11 15:00:00" )
-cT = format( cT, "%Y-%m-%d %H:" )
-cT
-ain( cT, specMeasData[ 1, 'time'], maxDist = 5 )
+hour.s_d0 = NULL
+hour.s_t0 = NULL
+hour.s_h0 = NULL
+
+cT = as.POSIXlt( "2016-05-12 00:00:00" )
+mT = format( cT, "%Y-%m-%d %H:" )
+mT
+
+tpe.getHourlyMeasure = function( deviceMeasDF, specifiedHour ) {
+  for( counter in 1:( dim( deviceMeasDF )[1] ) ) {
+    if( str_count( deviceMeasDF[counter, 'time'], mT) == 1 ) {
+      hour.s_d0 = c( hour.s_d0, deviceMeasDF[counter, 's_d0'] )
+      hour.s_t0 = c( hour.s_t0, deviceMeasDF[counter, 's_t0'] )
+      hour.s_h0 = c( hour.s_h0, deviceMeasDF[counter, 's_h0'] )
+      
+    }
+    
+  }
+  
+}
+
+tpe.getHourlyMeasure( specMeasData, mT )
 
 ## single measure data process -----
 spec_devID = as.character( tpeAirQCDevice[10, 'device_id'] )
