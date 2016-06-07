@@ -322,6 +322,15 @@ for( counter in 1:( dim(tpeAirQCDevice)[1] ) ) {
   
 }
 
+## reduce tpe measure data -----
+tpeOriDataPath = paste0( dataDir, "taipei airbox/origin/" )
+deviceFileList = list.files( tpeOriDataPath )
+deviceFileList
+load( paste0( tpeOriDataPath, deviceFileList[1] ) )
+
+cT = 
+
+## single measure data process -----
 spec_devID = as.character( tpeAirQCDevice[10, 'device_id'] )
 specMeasData = which( tpeAirQCMeasure$device_id == spec_devID )
 tpeAirQCMeasure[specMeasData[1], ]
