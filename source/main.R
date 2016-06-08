@@ -3,17 +3,17 @@
 # Author: Wu, Zhen-Hao (David, Wu)
 # Date: 2016.05.11 12:09 UTC+8
 # Last Modified:
-#   2016.05.18 11:21 UTC+8
+#   2016.06.07 19:45 UTC+8
 # Note: 
 #   
 #
 
 # install the libraries that the program needs
-install.packages( "ggmap" )
-install.packages( "rjson" )
-install.packages( "XML" )
-install.packages( "httr" )
-install.packages( "stringdist" )
+# install.packages( "ggmap" )
+# install.packages( "rjson" )
+# install.packages( "XML" )
+# install.packages( "httr" )
+# install.packages( "stringdist" )
 
 # load the libraries that the program needs
 library( ggmap ) # google map library
@@ -349,19 +349,39 @@ mT = format( cT, "%Y-%m-%d %H:" )
 mT
 
 tpe.getHourlyMeasure = function( deviceMeasData ) {
-  cT = as.POSIXlt( "2016-05-12 00:00:00" )
-  mT = format( cT, "%Y-%m-%d %H:" )
-  
-  for( counter in 1:( dim( deviceMeasData )[1] ) ) {
-    if( str_count( deviceMeasData[counter, 'time'], mT ) == 1 ) {
-      hour.s_d0 <<- c( hour.s_d0, deviceMeasData[counter, 's_d0'] )
-      hour.s_t0 <<- c( hour.s_t0, deviceMeasData[counter, 's_t0'] )
-      hour.s_h0 <<- c( hour.s_h0, deviceMeasData[counter, 's_h0'] )
+    hour.s_h0 = NULL
+    mT = format( cT, "%Y-%m-%d %H:" )
+    hour <<- c( hour, format( cT, "%Y-%m-%d %H:%M:%S" ) )
+    
+    for( counter in 1:( dim( deviceMeasData )[1] ) ) {
+      if( str_count( deviceMeasData[counter, 'time'], mT ) == 1 ) {
+        hour.s_d0 <<- c( hour.s_d0, deviceMeasData[counter, 's_d0'] )
+        hour.s_t0 <<- c( hour.s_t0, deviceMeasData[counter, 's_t0'] )
+        hour.s_h0 <<- c( hour.s_h0, deviceMeasData[counter, 's_h0'] )
+        
+      }
       
     }
+    hour.s_d0.max  <<- c( hour.s_d0.max, max( hour.s_d0 ) ) 
+    hour.s_t0.max  <<- c( hour.s_t0.max, max( hour.s_t0 ) )
+    hour.s_h0.max  <<- c( hour.s_h0.max, max( hour.s_h0 ) )
+    hour.s_d0.min  <<- c( hour.s_d0.min, min( hour.s_d0 ) )
+    hour.s_t0.min  <<- c( hour.s_t0.min, min( hour.s_t0 ) )
+    hour.s_h0.min  <<- c( hour.s_h0.min, min( hour.s_h0 ) )
+    hour.s_d0.mean <<- c( hour.s_d0.mean, mean( hour.s_d0 ) )
+    hour.s_t0.mean <<- c( hour.s_t0.mean, mean( hour.s_t0 ) )
+    hour.s_h0.mean <<- c( hour.s_h0.mean, mean( hour.s_h0 ) )
+    
+    cT = cT + 3600
     
   }
   
+}
+
+for( timeS in 1:(24 * 7) ) {
+  hour.s_d0 = NULL
+  hour.s_t0 = NULL
+
 }
 
 sig = specMeasData[113, ]
@@ -369,15 +389,7 @@ sig$time
 str_count( sig$time , mT )
 
 tpe.getHourlyMeasure( specMeasData )
-hour.s_d0.max = max( hour.s_d0 )
-hour.s_t0.max = max( hour.s_t0 )
-hour.s_h0.max = max( hour.s_h0 )
-hour.s_d0.min = min( hour.s_d0 )
-hour.s_t0.min = min( hour.s_t0 )
-hour.s_h0.min = min( hour.s_h0 )
-hour.s_d0.mean = mean( hour.s_d0 )
-hour.s_t0.mean = mean( hour.s_t0 )
-hour.s_h0.mean = mean( hour.s_h0 )
+
 
 ## single measure data process -----
 spec_devID = as.character( tpeAirQCDevice[10, 'device_id'] )
