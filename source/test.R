@@ -23,18 +23,15 @@ library( httr )
 library( stringr )
 library( stringdist )
 
-# set project directory path
+## check system local setting -----
+Sys.getlocale(category = "LC_ALL" )
+
+
+## set project directory path -----
 srcDir = paste0( getwd(), '/source/' )
 dataDir = paste0( getwd(), '/data/' )
 plotDir = paste0( getwd(), '/plots/' )
 downloadDir = paste0( getwd(), '/downloads/' )
-
-# set working directory to source
-setwd( srcDir )
-# load function script
-source( "tpeAirQC.R" )
-source( "FetchCWBOpenData.R" )
-source( "FetchTPCData.R" )
 
 
 ## check the download source data information -----
@@ -180,6 +177,13 @@ sourceData <- rbind( sourceData, newData )
 sourceData = na.omit( sourceData )
 
 save( sourceData, file = paste0( downloadDir, "srcDataInfo.Rdata" ) )
+
+## set working directory to source -----
+setwd( srcDir )
+# load function script
+source( "tpeAirQC.R" )
+source( "cwbOpenData.R" )
+source( "tpcOpenData.R" )
 
 ## process tpc data (unfinished) -----
 tpcInstantPower <- data.frame( id = integer(),
