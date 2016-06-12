@@ -44,6 +44,8 @@ remove( epa.AirQCSiteFile )
 # setup the environment path for EPA source data
 epa.AirQCMeasureFile = paste0( dataDir, "epa/allAirQCData.Rdata" )
 epa.AirQCSrcDataPath = paste0( downloadDir, "epa/" )
+epa.AirQCDataPath = paste0( dataDir, "epa/" )
+
 
 if( file.exists( epa.AirQCMeasureFile ) ) {
   message( "> INFO: load the data set last process" )
@@ -57,21 +59,31 @@ if( file.exists( epa.AirQCMeasureFile ) ) {
 } # END of 
 
 epa.AirQCFiles = sourceData[ which( sourceData$type == "epa" ), "file_name"]
-epa.AirQCFiles
+epa.AirQCFiles = unlist( epa.AirQCFiles )
 
-read.csv( file = paste0( epa.AirQCSrcDataPath, epa.AirQCFiles[1]) , encoding = "UTF-8" )
+epa.AirQCFiles[ 13 ]
+
+read.csv( file = paste0( epa.AirQCSrcDataPath, epa.AirQCFiles[14]) , encoding = "UTF-8" )
+epa.AirQCMeasureColNames = c( "SiteName", "County", "PSI", "MajorPollutant" ,
+                              "Status", "SO2", "CO", "O3", "PM10", "PM2.5",
+                              "NO2", "WindSpeed", "WindDirec", "FPMI", "NOx",
+                              "NO", "PublishTime" )
 
 # load the specified data file into 
-for( counter in 1:length( tpeAirQCFiles ) ) {
-  if( sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] ) {
+for( counter in 14:150 ) {
+  if( sourceData[ which( sourceData$file_name == epa.AirQCFiles[counter] ), 3 ] ) {
     message( "> INFO: File had been processed")
     
   }
   else {
     message( "> INFO: Load file data into dataframe" )
-    tpeAirQCMeasure = rbind( tpeAirQCMeasure, getAirBoxMeasure( paste0( tpeDownloadDir, tpeAirQCFiles[counter] ) ) )
-    sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] = TRUE
+    newDF = read.csv( file = paste0( epa.AirQCSrcDataPath, epa.AirQCFiles[counter]) , encoding = "UTF-8" )
+    colnames( newDF ) = epa.AirQCMeasureColNames
+    epa.AirQCMeasure = rbind( epa.AirQCMeasure, newDF )
+    # sourceData[ which( sourceData$file_name == epa.AirQCFiles[counter] ), 3 ] = TRUE
     
   }
   
 }
+
+save( epa.AirQCMeasure, file = epa.AirQCMeasureFile )
