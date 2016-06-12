@@ -56,4 +56,22 @@ if( file.exists( epa.AirQCMeasureFile ) ) {
   
 } # END of 
 
-which( sourceData$type == "epa" )
+epa.AirQCFiles = sourceData[ which( sourceData$type == "epa" ), "file_name"]
+epa.AirQCFiles
+
+read.csv( file = paste0( epa.AirQCSrcDataPath, epa.AirQCFiles[1]) , encoding = "UTF-8" )
+
+# load the specified data file into 
+for( counter in 1:length( tpeAirQCFiles ) ) {
+  if( sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] ) {
+    message( "> INFO: File had been processed")
+    
+  }
+  else {
+    message( "> INFO: Load file data into dataframe" )
+    tpeAirQCMeasure = rbind( tpeAirQCMeasure, getAirBoxMeasure( paste0( tpeDownloadDir, tpeAirQCFiles[counter] ) ) )
+    sourceData[ which( sourceData$file_name == tpeAirQCFiles[counter] ), 3 ] = TRUE
+    
+  }
+  
+}

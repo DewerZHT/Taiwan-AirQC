@@ -33,7 +33,6 @@ dataDir = paste0( getwd(), '/data/' )
 plotDir = paste0( getwd(), '/plots/' )
 downloadDir = paste0( getwd(), '/downloads/' )
 
-
 ## check the download source data information -----
 # 
 srcDataFile = paste0( downloadDir, "srcDataInfo.Rdata" )
@@ -48,6 +47,14 @@ if( file.exists( srcDataFile ) ) {
   sourceData <- data.frame( file_id = integer(), file_name = character(), proceed = logical(), type = character() )
   
 }
+
+
+# set working directory to source
+setwd( srcDir )
+# load function script
+source( "tpeAirQC.R" )
+source( "cwbOpenData.R" )
+source( "tpcOpenData.R" )
 
 ## insert taipei airbox download source info into dataframe -----
 # get the file list from taipei airbox download source dir
@@ -177,13 +184,6 @@ sourceData <- rbind( sourceData, newData )
 sourceData = na.omit( sourceData )
 
 save( sourceData, file = paste0( downloadDir, "srcDataInfo.Rdata" ) )
-
-## set working directory to source -----
-setwd( srcDir )
-# load function script
-source( "tpeAirQC.R" )
-source( "cwbOpenData.R" )
-source( "tpcOpenData.R" )
 
 ## process tpc data (unfinished) -----
 tpcInstantPower <- data.frame( id = integer(),
