@@ -13,8 +13,10 @@
 ## setup dependency libraries for this script -----
 # install the libraries (uncommit if you don't have the libraries as following)
 # install.packages( "stringr" )
+# install.packages( "ggplot2" )
 # load the libraries
 library( stringr )
+library( ggplot2 )
 
 ## function decleartion -----
 downloadEPAData <- function( resourceID, token, destFile, format ) {
@@ -87,3 +89,79 @@ for( counter in 13:150 ) {
 }
 
 save( epa.AirQCMeasure, file = epa.AirQCMeasureFile )
+load( file = epa.AirQCMeasureFile )
+
+specifySite = "??????"
+startTime = as.POSIXlt( "2016-05-25 00:00:00" )
+
+epa.PlotOneDayAirQC = function( siteName, specifyDay ) {
+  specifyTimeStr = format( specifyDay, "%Y-%m-%d" )
+  # create a epa subset filiter by specified date
+  epa.subset <- as.data.frame( epa.AirQCMeasure[ grep( specifyTimeStr, epa.AirQCMeasure$PublishTime ), ] )
+  # select data by a specified sitename in epa subset
+  epa.subset <- as.data.frame( epa.subset[ grep( siteName, epa.subset$SiteName ), ] )
+  
+  ## draw a time line for this specified AirQc data
+  # Start PNG device driver to save output to figure.png
+  epa.plotFile_name = paste0( plotDir, "epa/AirQC_", epa.subset$SiteName, specifyTimeStr, ".png" )
+  png( filename = epa.plotFile_name, height = 720, width = 1280, bg = "white" )
+  
+  # Define colors to be used for PSI, PM10, PM2.5
+  plot_colors = c( "blue","red","forestgreen" )
+  plot_name = c( "PSI", "PM10", "PM2.5" )
+  # Set the plot title text
+  plot_time = NULL
+  plot_title = paste0( "Sanyi ", format( specifyDay, "%Y-%m-%d" ) )
+  
+  # compute the max value with y axis
+  max_y = NULL
+  max_y = c( max_y, max( epa.subset$PSI ) )
+  max_y = c( max_y, max( epa.subset$PM10 ) )
+  max_y = c( max_y, max( epa.subset$PM2.5 ) )
+  max_y = max( max_y )
+  
+  plot( epa.subset$PSI, type="o", col=plot_colors[1], ylim = c( 0, max_y ), axes = FALSE, ann = FALSE )
+  
+  plot_time = NULL
+  for( counter in 1:24 ) {
+    plot_time = c( plot_time, format( specifyDay, "%H:%M:%S" ) )
+    specifyDay = specifyDay + 3600
+    
+  }
+  
+  # Make x axis using Mon-Fri labels
+  axis( 1, at = 1:24, lab = plot_time )
+  
+  # Make y axis with horizontal labels that display ticks at 
+  # every 4 marks. 4*0:max_y is equivalent to c(0,4,8,12).
+  axis( 2, las = 1, at = 4*0:max_y )
+  
+  # Create box around plot
+  box()
+  
+  # Graph trucks with red dashed line and square points
+  lines( epa.subset$PM10, type = "o", pch = 22, lty = 2, col = plot_colors[2] )
+  
+  # Graph suvs with green dotted line and diamond points
+  lines( epa.subset$PM2.5, type = "o", pch = 23, lty = 3, col = plot_colors[3] )
+  
+  # Create a title with a red, bold/italic font
+  title( main = plot_title, col.main = "red", font.main = 4)
+  
+  # Label the x and y axes with dark green text
+  title( xlab = "Time", col.lab = rgb( 0, 0.5, 0 ) )
+  title( ylab = "Value", col.lab = rgb( 0, 0.5, 0 ) )
+  
+  # Create a legend at (1, 1) that is slightly smaller 
+  # (cex) and uses the same line colors and points used by 
+  # the actual plots
+  legend( "bottomleft", legend = plot_name, cex = 0.8, col = plot_colors, pch = 21:23, lty = 1:3 )
+  
+  # Turn off device driver (to flush output to png)
+  dev.off()
+  
+}
+
+specifySite = "??????"
+startTime = as.POSIXlt( "2016-05-22 00:00:00" )
+epa.PlotOneDayAirQC( specifySite, startTime )
