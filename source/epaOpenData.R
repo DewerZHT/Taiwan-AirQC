@@ -70,7 +70,7 @@ epa.AirQCMeasureColNames = c( "SiteName", "County", "PSI", "MajorPollutant" ,
                               "NO", "PublishTime" )
 
 # load the specified data file into 
-for( counter in 14:150 ) {
+for( counter in 13:150 ) {
   if( sourceData[ which( sourceData$file_name == epa.AirQCFiles[counter] ), 3 ] ) {
     message( "> INFO: File had been processed")
     
