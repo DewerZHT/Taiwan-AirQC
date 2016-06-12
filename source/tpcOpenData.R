@@ -32,3 +32,9 @@ downloadInstantPowerGenerating <- function( destFile, forcedownload = FALSE ) {
   }
   
 }
+
+tpc.DataDir = paste0( dataDir, )
+tpc.AllData.File = 
+load()
+
+specifyDevRecords.subset <- as.data.frame( specifyDevRecords[ grep( "2016-05-28", time ), ])
