@@ -163,5 +163,25 @@ epa.PlotOneDayAirQC = function( siteName, specifyDay ) {
 }
 
 specifySite = "??????"
-startTime = as.POSIXlt( "2016-05-22 00:00:00" )
+startTime = as.POSIXlt( "2016-05-24 00:00:00" )
+## value has na problem
+# create a epa subset filiter by specified date
+epa.subset <- as.data.frame( epa.AirQCMeasure[ grep( startTime, epa.AirQCMeasure$PublishTime ), ] )
+# select data by a specified sitename in epa subset
+epa.subset <- as.data.frame( epa.subset[ grep( specifySite, epa.subset$SiteName ), ] )
+max_y = NULL
+max_y = c( max_y, max( epa.subset$PSI ) )
+max_y = c( max_y, max( epa.subset$PM10 ) )
+max_y = c( max_y, max( epa.subset$PM2.5 ) )
+max_y = max( max_y )
+
+                      
 epa.PlotOneDayAirQC( specifySite, startTime )
+
+# create a sequence plot by a week data
+for( counter in 1:7 ) {
+  print( format( startTime, "%Y-%m-%d") )
+  epa.PlotOneDayAirQC( specifySite, startTime )
+  startTime = startTime + 86400
+  
+}
