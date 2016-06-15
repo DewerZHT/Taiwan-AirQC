@@ -193,91 +193,14 @@ for( siteCNT in 1:length( AirQCSite.Name ) ) {
    
 }
 
-# set specify site
-epa.specifySite.Name = "??????"
-tpc.specifySite.Name = "??????#2"
 # set start date 
-startTime = as.POSIXlt( "2016-05-22 00:00:00" )
-specifyTimeStr = format( startTime, "%Y-%m-%d" )
-# create a epa subset filiter by specified date
-epa.subset = as.data.frame( epa.AirQCMeasure[ grep( specifyTimeStr, epa.AirQCMeasure$PublishTime ), ] )
+siteName = "??????"
 # select data by a specified sitename in epa subset
-epa.subset = as.data.frame( epa.subset[ grep( epa.specifySite.Name, epa.subset$SiteName ), ] )
+epa.subset = as.data.frame( epa.AirQCMeasure[ grep( siteName, epa.AirQCMeasure$SiteName ), ] )
 # drop na value from dataframe to avoid plot na values problem
 epa.subset = na.omit( epa.subset )
 
-## draw a time line for this specified AirQc data
-# Start PNG device driver to save output to figure.png
-tmpSiteName = epa.AirQCSite[ which( epa.AirQCSite$SiteName == epa.specifySite.Name), 2]
-epa.plotFile_name = paste0( plotDir, "ALL_", epa.specifySite.Name, specifyTimeStr, ".png" )
-png( filename = epa.plotFile_name, height = 720, width = 1280, bg = "white" )
-
-# Define colors to be used for PSI, PM10, PM2.5
-plot_colors = c( "blue","red","forestgreen", "brown" )
-plot_name = c( "PSI", "PM10", "PM2.5" )
-# Set the plot title text
-plot_time = NULL
-plot_title = paste0( tmpSiteName, format( startTime, "%Y-%m-%d" ) )
-
-# compute the max value with y axis
-max_y = NULL
-max_y = c( max_y, max( epa.subset$PSI ) )
-max_y = c( max_y, max( epa.subset$PM10 ) )
-max_y = c( max_y, max( epa.subset$PM2.5 ) )
-max_y = max( max_y )
-
-plot( epa.subset$PSI, type="o", col=plot_colors[1], xlim = c( 0, 23 ), ylim = c( 0, max_y ), axes = FALSE, ann = FALSE, lwd = 3 )
-
-plot_time = NULL
-for( counter in 1:24 ) {
-  plot_time = c( plot_time, format( specifyDate, "%H:%M:%S" ) )
-  specifyDate = specifyDate + 3600
-  
-}
-
-# Make x axis using 24hrs labels
-axis( 1, at = 1:24, lab = plot_time )
-
-# Make y axis with horizontal labels that display ticks at 
-# every 4 marks. 4*0:max_y is equivalent to c(0,4,8,12).
-axis( 2, las = 1, at = 4*0:max_y )
-
-# Create box around plot
-box()
-
-# Graph trucks with red dashed line and square points
-lines( epa.subset$PM10, type = "o", pch = 22, lty = 2, col = plot_colors[2], lwd = 6 )
-
-# Graph suvs with green dotted line and diamond points
-lines( epa.subset$PM2.5, type = "o", pch = 23, lty = 3, col = plot_colors[3], lwd = 6 )
-
-# Create a title with a red, bold/italic font
-title( main = plot_title, col.main = "red", font.main = 4, cex = 2)
-
-# Label the x and y axes with dark green text
-title( xlab = "Time", col.lab = rgb( 0, 0.5, 0 ), cex.lab = 2 )
-title( ylab = "Value", col.lab = rgb( 0, 0.5, 0 ), cex.lab = 2 )
-
-## Allow a second plot on the same graph
-par( new = TRUE )
-# data by a specified date in tpc subset
-tpc.subset.TC = as.data.frame( specifyDevRecords.subset.b[ grep( specifyTimeStr, specifyDevRecords.subset.b$tpcdatas.Timestamp ), ] )
-# select data by a specified sitename in tpc subset
-tpc.subset.TC = as.data.frame( tpc.subset.TC[ grep( specifySite.Name, tpc.subset.TC$tpcdatas.Name ), ] )
-max_y = max( tpc.subset.TC$tpcdatas.Gen )
-plot( tpc.subset.TC$tpcdatas.Gen, type="o", pch = 24, col=plot_colors[4], xlim = c( 0, 23 ), ylim = c( ( max_y - 50 ), ( max_y + 50 ) ), axes = FALSE, ann = FALSE, lwd = 6,
-      cex.lab=1.5, cex.axis=1.5, cex.main=1.5 )
-
-# Make y2 axis using 24hrs labels
-axis( 4, ylim = c( ( max_y - 50 ), ( max_y + 50 ) ), col = "red", col.axis = "red", las = 1 )
-
-# Create a legend at (1, 1) that is slightly smaller 
-# (cex) and uses the same line colors and points used by 
-# the actual plots
-legend( "bottomleft", legend = plot_name, cex = 2, col = plot_colors, pch = 21:24, lty = 1:3 )
-
-# Turn off device driver (to flush output to png)
-dev.off()
+save( epa.subset, file = paste0( epa.AirQCDataPath, "Linkou.Rdata" ) )
 
 dim(epa.AirQCMeasure)
 
