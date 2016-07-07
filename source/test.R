@@ -603,3 +603,6 @@ ggplot( aes( x = timestamp, y = gen ), data = specifyDevRecords.subset ) + geom_
 
 theme_set(theme_bw()) # Change the theme to my preference
 ggplot( aes( x = time, y = pm2.5 ), data = specifyDevRecordsTPE ) + geom_point()
+
+xmlFile = paste0( downloadDir, "cwb/AutoWeatherMeasure/20160509_18 O-A0001-001.xml" )
+cwbXML = xmlTreeParse( xmlFile, useInternalNodes = TRUE )
