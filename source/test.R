@@ -3,7 +3,7 @@
 # Author: Wu, Zhen-Hao (David, Wu)
 # Date: 2016.05.11 12:09 UTC+8
 # Last Modified:
-#   2016.06.07 19:45 UTC+8
+#   2016.07.09 16:23 UTC+8
 # Note: 
 #   
 #
@@ -604,5 +604,182 @@ ggplot( aes( x = timestamp, y = gen ), data = specifyDevRecords.subset ) + geom_
 theme_set(theme_bw()) # Change the theme to my preference
 ggplot( aes( x = time, y = pm2.5 ), data = specifyDevRecordsTPE ) + geom_point()
 
+getwd()
+source( paste0( srcDir, "cwbOpenData.R" ) )
+
 xmlFile = paste0( downloadDir, "cwb/AutoWeatherMeasure/20160509_18 O-A0001-001.xml" )
 cwbXML = xmlTreeParse( xmlFile, useInternalNodes = TRUE )
+cwbXML = xmlRoot( cwbXML )
+cwbXML = xmlToList( cwbXML )
+cwbXML
+lat = cwbXML[9][[ 1 ]][ "lat" ]
+lat
+lon = cwbXML[9][[ 1 ]][ "lon" ]
+lon
+locationName = cwbXML[9][[ 1 ]][ "locationName" ]
+locationName
+stationId = cwbXML[9][[ 1 ]][ "stationId" ]
+stationId
+obsTime = cwbXML[9][[ 1 ]][ "time" ][[ 1 ]][ "obsTime" ]
+obsTime
+ELEV = cwbXML[9][[ 1 ]][ 6 ][[ 1 ]][[ 2 ]]
+ELEV
+WDIR = cwbXML[9][[ 1 ]][ 7 ][[ 1 ]][[ 2 ]]
+WDIR
+WDSD = cwbXML[9][[ 1 ]][ 8 ][[ 1 ]][[ 2 ]]
+WDSD
+TEMP = cwbXML[9][[ 1 ]][ 9 ][[ 1 ]][[ 2 ]]
+TEMP
+HUMD = cwbXML[9][[ 1 ]][ 10 ][[ 1 ]][[ 2 ]]
+HUMD
+PRES = cwbXML[9][[ 1 ]][ 11 ][[ 1 ]][[ 2 ]]
+PRES
+SUN = cwbXML[9][[ 1 ]][ 12 ][[ 1 ]][[ 2 ]]
+SUN
+H_24R = cwbXML[9][[ 1 ]][ 13 ][[ 1 ]][[ 2 ]]
+H_24R
+WS15M = cwbXML[9][[ 1 ]][ 14 ][[ 1 ]][[ 2 ]]
+WS15M
+WD15M = cwbXML[9][[ 1 ]][ 15 ][[ 1 ]][[ 2 ]]
+WD15M
+WS15T = cwbXML[9][[ 1 ]][ 16 ][[ 1 ]][[ 2 ]]
+WS15T
+CITY = cwbXML[9][[ 1 ]][ 17 ][[ 1 ]][[ 2 ]]
+CITY
+CITY_SN = cwbXML[9][[ 1 ]][ 18 ][[ 1 ]][[ 2 ]]
+CITY_SN
+TOWN = cwbXML[9][[ 1 ]][ 19 ][[ 1 ]][[ 2 ]]
+TOWN
+TOWN_SN = cwbXML[9][[ 1 ]][ 20 ][[ 1 ]][[ 2 ]]
+TOWN_SN
+
+lat = list()
+lon = list()
+locationName = list()
+stationId = list()
+obsTime = list()
+ELEV = list()
+WDIR = list()
+WDSD = list()
+TEMP = list()
+HUMD = list()
+PRES = list()
+SUN = list()
+H_24R = list()
+WS15M = list()
+WD15M = list()
+WS15T = list()
+CITY = list()
+CITY_SN = list()
+TOWN = list()
+TOWN_SN = list()
+
+# for loop for testing
+for( count in 9:( length( cwbXML ) ) ) {
+  lat[ count - 8 ] = cwbXML[count][[ 1 ]][ "lat" ]
+  lon[ count - 8 ] = cwbXML[count][[ 1 ]][ "lon" ]
+  locationName[ count - 8 ] = cwbXML[count][[ 1 ]][ "locationName" ]
+  stationId[ count - 8 ] = cwbXML[count][[ 1 ]][ "stationId" ]
+  obsTime[ count - 8 ] = cwbXML[count][[ 1 ]][ "time" ][[ 1 ]][ "obsTime" ]
+  ELEV[ count - 8 ] = cwbXML[count][[ 1 ]][ 6 ][[ 1 ]][[ 2 ]]
+  WDIR[ count - 8 ] = cwbXML[count][[ 1 ]][ 7 ][[ 1 ]][[ 2 ]]
+  WDSD[ count - 8 ] = cwbXML[count][[ 1 ]][ 8 ][[ 1 ]][[ 2 ]]
+  TEMP[ count - 8 ] = cwbXML[count][[ 1 ]][ 9 ][[ 1 ]][[ 2 ]]
+  HUMD[ count - 8 ] = cwbXML[count][[ 1 ]][ 10 ][[ 1 ]][[ 2 ]]
+  PRES[ count - 8 ] = cwbXML[count][[ 1 ]][ 11 ][[ 1 ]][[ 2 ]]
+  SUN[ count - 8 ] = cwbXML[count][[ 1 ]][ 12 ][[ 1 ]][[ 2 ]]
+  H_24R[ count - 8 ] = cwbXML[count][[ 1 ]][ 13 ][[ 1 ]][[ 2 ]]
+  WS15M[ count - 8 ] = cwbXML[count][[ 1 ]][ 14 ][[ 1 ]][[ 2 ]]
+  WD15M[ count - 8 ] = cwbXML[count][[ 1 ]][ 15 ][[ 1 ]][[ 2 ]]
+  WS15T[ count - 8 ] = cwbXML[count][[ 1 ]][ 16 ][[ 1 ]][[ 2 ]]
+  CITY[ count - 8 ] = cwbXML[count][[ 1 ]][ 17 ][[ 1 ]][[ 2 ]]
+  CITY_SN[ count - 8 ] = cwbXML[count][[ 1 ]][ 18 ][[ 1 ]][[ 2 ]]
+  TOWN[ count - 8 ] = cwbXML[count][[ 1 ]][ 19 ][[ 1 ]][[ 2 ]]
+  TOWN_SN[ count - 8 ] = cwbXML[count][[ 1 ]][ 20 ][[ 1 ]][[ 2 ]]
+  
+}
+
+# unlist the measure latitude data
+lat = unlist( lat )
+# convert latitude from string to double float
+lat = as.double( lat )
+lat
+
+lon = unlist( lon )
+lon = as.double( lon )
+lon
+
+locationName = unlist( locationName )
+locationName
+
+stationId = unlist( stationId )
+stationId
+
+obsTime = unlist( obsTime )
+obsTime
+
+ELEV = unlist( ELEV )
+ELEV = as.double( ELEV )
+ELEV
+
+WDIR = unlist( WDIR )
+WDIR = as.double( WDIR )
+WDIR
+
+WDSD = unlist( WDSD )
+WDSD = as.double( WDSD )
+WDSD
+
+TEMP = unlist( TEMP )
+TEMP = as.double( TEMP )
+TEMP
+
+HUMD = unlist( HUMD )
+HUMD = as.double( HUMD )
+HUMD
+
+PRES = unlist( PRES )
+PRES = as.double( PRES )
+PRES
+
+SUN = unlist( SUN )
+SUN = as.double( SUN )
+SUN
+
+H_24R = unlist( H_24R )
+H_24R = as.double( H_24R )
+H_24R
+
+WS15M = unlist( WS15M )
+WS15M = as.double( WS15M )
+WS15M
+
+WD15M = unlist( WD15M )
+WD15M = as.double( WD15M )
+WD15M
+
+WS15T = unlist( WS15T )
+WS15T = as.double( WS15T )
+WS15T
+
+CITY = unlist( CITY )
+CITY
+
+CITY_SN = unlist( CITY_SN )
+CITY_SN = as.integer( CITY_SN)
+CITY_SN
+
+TOWN = unlist( TOWN )
+TOWN
+
+TOWN_SN = unlist( TOWN_SN )
+TOWN_SN
+
+weatherMeasure = data.frame( lat, lon, locationName, stationId, obsTime, 
+            ELEV, WDIR, WDSD, TEMP, HUMD, PRES, SUN, H_24R,
+            WS15M, WD15M, WS15T, CITY, CITY_SN, TOWN, TOWN_SN )
+
+weatherMeasure$locationName
+
+length( cwbXML )
+cwbXML[ length( cwbXML ) ][[ 1 ]][ 1 ]

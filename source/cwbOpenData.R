@@ -3,7 +3,7 @@
 # Author: Wu, Zhen-Hao (David, Wu)
 # Date: 2016.05.13 20:58 UTC+8
 # Last Modified:
-#   2016.07.05 10:58 UTC+8
+#   2016.07.08 18:33 UTC+8
 # Note: 
 #   this file have some function to get cwb open data
 #   from internet by it's official API method
@@ -164,6 +164,10 @@ parseRainMeasure <- function( xmlFile, dataframe ) {
 # description:
 weatherXML2CSV <- function( xmlFile, csvFile ) {
   dataFrame = as.data.frame()
+  
+  cwbXML = xmlTreeParse( xmlFile, useInternalNodes = TRUE )
+  cwbXML = xmlRoot( cwbXML )
+  cwbXML = xmlToList( cwbXML )
   
   return( dataFrame )
 }
